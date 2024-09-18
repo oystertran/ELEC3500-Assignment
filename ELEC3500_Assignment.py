@@ -14,7 +14,7 @@ def start_proxy_server(host, port):
     # Create a server socket
     servSock = socket(AF_INET, SOCK_STREAM)
     # TODO: Start - Bind the socket to a port and begin listening
-
+    socket.bind()
     # TODO: End
 
     print('Proxy server running...')
