@@ -17,7 +17,7 @@ def start_proxy_server(host, port):
     # Create a server socket
     servSock = socket(AF_INET, SOCK_STREAM)
     # TODO: Start - Bind the socket to a port and begin listening
-    servSock.bind(host, port)
+    servSock.bind((host, port))
     servSock.listen(10)
     # TODO: End
 
@@ -91,7 +91,7 @@ def handle_client(cliSock):
         # TODO: End
 
         # TODO: Start - Receive response from the web server
-        response = ''
+        response = b''
         while True:
             data = webSock.recv(BUFFER_SIZE)
             if not data:
@@ -100,7 +100,7 @@ def handle_client(cliSock):
         # TODO: End
 
         # TODO: Check for 304 Not Modified status code
-        if "304 Not Modified" in response:
+        if b"304 Not Modified" in response:
         #TODO: End
             print(f"Not Modified, sending file from cache: {url}")
             # TODO: Start - Read data from the cache and send to client
@@ -125,7 +125,8 @@ def handle_client(cliSock):
         # TODO: End
 
     # TODO: Start - Close the client socket 
-    
+    cliSock.close()
+    webSock.close()
     # TODO: End
 
     return
