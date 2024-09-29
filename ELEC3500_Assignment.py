@@ -33,6 +33,7 @@ def start_proxy_server(host, port):
 def handle_client(cliSock):
     # TODO: Start - Receive the request
     request = cliSock.recv(BUFFER_SIZE).decode('utf-8')
+    print("Request received")
     # TODO: End
 
     if not request:
@@ -41,14 +42,15 @@ def handle_client(cliSock):
     
     #Get the request url
     url = request.split()[1]
+    
 
     # Remove unnecessary characters from url
     while url.startswith('/') or url.startswith(':'):
         url = url[1:]
+        
     
     # Assign file path in cache
     cacheFilePath = os.path.join(CACHE_DIR, url.replace('/','_').replace(':','_'))
-
         
     try:
         # TODO: Start - Create socket to fetch content from web
@@ -57,7 +59,8 @@ def handle_client(cliSock):
 
         # TODO: Start - From the url, get the host name and path
         # e.g the hostname is gaia.cs.umass.edu, 
-        # the path is /wireshark-labs/HTTP-wireshark-file1.html 
+        # the path is /wireshark-labs/HTTP-wireshark-file1.html
+        print(request) 
         url = url.split(":/", 1)[1] # take the second half of the url after https://
         urlparts = url.split("/", 1) # split the hostname and path into 2 parts
         webHostn = urlparts[0] # host name is the firt section
@@ -140,6 +143,16 @@ def handle_client(cliSock):
     # TODO: End
 
     return
+
+# This is a helper function to extract the URL from the request
+def get_url (request):
+    request_part = request.splitlines()
+
+    for part in request_part:
+        if part.startswith("Referer:"):
+            referer_url = part.split(":", 1)[1].strip()
+            return referer_url
+    return None
 
 if __name__ == "__main__":
     start_proxy_server(proxy_host, proxy_port)
