@@ -1,5 +1,6 @@
 from socket import *
 import os
+from urllib.parse import *
 import time # import module to get last modification time of file
 from email.utils import formatdate
 
@@ -31,7 +32,7 @@ def start_proxy_server(host, port):
 
 def handle_client(cliSock):
     # TODO: Start - Receive the request
-    request = cliSock.recv(BUFFER_SIZE).decode(utf-8)
+    request = cliSock.recv(BUFFER_SIZE).decode('utf-8')
     # TODO: End
 
     if not request:
@@ -57,7 +58,7 @@ def handle_client(cliSock):
         # TODO: Start - From the url, get the host name and path
         # e.g the hostname is gaia.cs.umass.edu, 
         # the path is /wireshark-labs/HTTP-wireshark-file1.html 
-        url = url.split("://", 1)[1] # take the second half of the url after https://
+        url = url.split(":/", 1)[1] # take the second half of the url after https://
         urlparts = url.split("/", 1) # split the hostname and path into 2 parts
         webHostn = urlparts[0] # host name is the firt section
         webPath = urlparts[1] # webpath is the second section
@@ -122,6 +123,15 @@ def handle_client(cliSock):
     except Exception as e:
         # TODO: Start - Print an error message and send HTTP error code to the client
         print("ERROR CODE PRINTED");
+        error_response = (
+            "HTTP/1.1 404 Not Found\r\n"
+            "Content-Type: text/html\r\n"
+            "Content-Length: 44\r\n"
+            "\r\n"
+            "<html><body><h1>404 Not Found</h1></body></html>"
+        )
+        # Send the error response to the client through the socket
+        cliSock.sendall(error_response.encode('utf-8'))
         # TODO: End
 
     # TODO: Start - Close the client socket 
