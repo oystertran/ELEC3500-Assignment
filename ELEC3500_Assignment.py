@@ -33,7 +33,6 @@ def start_proxy_server(host, port):
 def handle_client(cliSock):
     # TODO: Start - Receive the request
     request = cliSock.recv(BUFFER_SIZE).decode('utf-8')
-    print("Request received")
     # TODO: End
 
     if not request:
@@ -60,11 +59,11 @@ def handle_client(cliSock):
         # TODO: Start - From the url, get the host name and path
         # e.g the hostname is gaia.cs.umass.edu, 
         # the path is /wireshark-labs/HTTP-wireshark-file1.html
-        print(request) 
-        url = url.split(":/", 1)[1] # take the second half of the url after https://
-        urlparts = url.split("/", 1) # split the hostname and path into 2 parts
-        webHostn = urlparts[0] # host name is the firt section
-        webPath = urlparts[1] # webpath is the second section
+        request_url = get_url(request)
+        parsed_url = urlparse(request_url)
+        url_parts = parsed_url.path.strip('/').split('/')
+        webHostn = url_parts[0] # host name is the firt section
+        webPath = "/" + url_parts[1] + "/" + url_parts[2] 
         # TODO: End
 
         # Replace empty path with '/' character
@@ -73,6 +72,7 @@ def handle_client(cliSock):
         
         # TODO: Start - Establish connection with web server
         webSock.connect((webHostn, 80))
+        print("Connection established")
         # TODO: End 
 
         # Check whether the file exists in the cache
@@ -83,13 +83,15 @@ def handle_client(cliSock):
             # (Hint: you may need to import another module to help with this)   
             lastModified = os.path.getmtime(cacheFilePath) # get last modification time 
             ifModSince = formatdate(timeval=lastModified, usegmt=True)
+            print("lastModified: " + str(lastModified))
+            print("ifModSince: " + str(ifModSince))
             #TODO: End
         else:
             ifModSince="\r\n"
 
         # Build a simple GET request
         webRequest = "GET " + webPath + " HTTP/1.1\r\nHost: " + webHostn +"\r\n" + ifModSince 
-
+        print("webRequest: " + webRequest)
         # TODO: Start - Send the request to the web server
         webSock.sendall(webRequest.encode('utf-8'))
         # TODO: End
@@ -101,6 +103,7 @@ def handle_client(cliSock):
             if not data:
                 break
             response += data
+        print("Response: " + response.decode('utf-8'))
         # TODO: End
 
         # TODO: Check for 304 Not Modified status code
@@ -125,17 +128,23 @@ def handle_client(cliSock):
     # Handle errors
     except Exception as e:
         # TODO: Start - Print an error message and send HTTP error code to the client
-        print("ERROR CODE PRINTED");
+        print(e)
+
+        # Get the exception message as the error response body
+        error_message = f"<h1>Exception Occurred: {str(e)}</h1>"
+
+        # Build the full HTTP response
         error_response = (
-            "HTTP/1.1 404 Not Found\r\n"
+            "HTTP/1.1 500 Internal Server Error\r\n"
             "Content-Type: text/html\r\n"
-            "Content-Length: 44\r\n"
+            f"Content-Length: {len(error_message)}\r\n"
             "\r\n"
-            "<html><body><h1>404 Not Found</h1></body></html>"
+            f"<html><body>{error_message}</body></html>"
         )
+
         # Send the error response to the client through the socket
         cliSock.sendall(error_response.encode('utf-8'))
-        # TODO: End
+        # TODO: End 
 
     # TODO: Start - Close the client socket 
     cliSock.close()
