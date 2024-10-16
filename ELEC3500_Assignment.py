@@ -132,13 +132,13 @@ def handle_client(cliSock):
     except Exception as e:
         # TODO: Start - Print an error message and send HTTP error code to the client
         print(e)
-
+        
         # Get the exception message as the error response body
         error_message = f"<h1>Exception Occurred: {str(e)}</h1>"
-
+        error_code = response.split(b'\r\n')[0].decode('utf-8')
         # Build the full HTTP response
         error_response = (
-            "HTTP/1.1 500 Internal Server Error\r\n"
+            f"HTTP/1.1 {error_code} \r\n"
             "Content-Type: text/html\r\n"
             f"Content-Length: {len(error_message)}\r\n"
             "\r\n"
