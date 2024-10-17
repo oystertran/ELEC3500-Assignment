@@ -135,7 +135,7 @@ def handle_client(cliSock):
         
         # Get the exception message as the error response body
         error_message = f"<h1>Exception Occurred: {str(e)}</h1>"
-        error_code = response.split(b'\r\n')[0].decode('utf-8')
+        error_code = response.split(b'\r\n')[0].decode('utf-8') #extract the error code from the web response
         # Build the full HTTP response
         error_response = (
             f"HTTP/1.1 {error_code} \r\n"

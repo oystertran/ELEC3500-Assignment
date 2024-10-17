@@ -50,18 +50,26 @@
 		\item \textbf{How could you implement potential improvements into this script to overcome these limitations? A flowchart or pseudocode may help to illustrate your answer. (6 marks)}\\
 			\begin{itemize}
 				\item \textbf{Lacking HTTP request handle} \\
-					I would build POST request in the \texttt{handle\_client() method} that would allow user to input data to send to the server.\\
+					I would build POST request in the \texttt{handle\_client() method} that would allow user to input data to send to the server. The server will get the user input from the server response, process that input, and use the HTTP POST method to send the information to the web server. \\
+					The flow chart below illustrate how the web request and response will be processed. When the request is received, the proxy server will extract the request from the web server. If the user input field is not null, it will send process the input and then use POST method to send it to the webserver. Else, it will process as implemented in the initial program. \\
 					\begin{center}
-						\includegraphics[scale=0.4]{post.png}
+						\includegraphics[scale=0.3]{post.png}
 					\end{center}
-				\pagebreak
+					\pagebreak
 				  
 				\item \textbf{Simple Caching}\\
-					A solution for this is to add a mechanism to auto delete the cache files after a specific amount of time. It could be somewhere 5 to 10 minutes
+					A possible solution for this problem is to implement a deadline for files in the cache folder. If the user does not access the same webpage in a specific amount of time, the files corresponding to the webpage will be deleted. \\
+					The flow chart below illustrate the mechanism of this new caching method. 
+					\begin{center}
+						\includegraphics[scale=0.4]{cache.png}
+					\end{center}
+					\pagebreak
 				\item \textbf{Single Thread Implementation}\\
+					To fix this issue, we can implement a multi-threaded system for the proxy server. The server will work as follow: After the server have fetched the request from the webserver, it will create a thread for each client using the proxy server. Each thread will handle a client. Then, the proxy server will proceed as it is in the initial implementation.
 					\begin{center}
 						\includegraphics[scale=0.3]{multi_thread.png}
-					\end{center}  
+					\end{center}
+					\pagebreak
 			\end{itemize}
 		\item \textbf{Is the proxy server using UDP or TCP sockets? How can you tell? What other protocols are involved?(2 marks)}\\
 		To know if the proxy server is using a UDP or TCP socket, I looked at the initialization of the socket server: \texttt{servSock = socket(AF\_INET, SOCK\_STREAM)}. The socket is using \texttt{SOCK\_STREAM} as the argument, which is used for a TCP connection. If it were to be UDP, the argument should be \texttt{SOCK\_DGRAM}.
@@ -76,6 +84,6 @@
 		
 		\item \textbf{In this question, you will put together much of what you have learned about Internet protocols. Suppose you buy a brand new computer, connect it to Ethernet, and want to download a Web page. What are all the protocol steps that take place, starting from powering on your PC to getting the Web page? Assume there is nothing in our DNS or browser caches when you power on your PC. (Hint: the steps include the use of Ethernet, DHCP, ARP, DNS, TCP, and HTTP protocols.) Explicitly indicate in your steps how you obtain the IP and MAC addresses of a gateway router. (6 marks)}\\
 		
-		The first step after starting the computer is to use the Ethernet to use Dynamic Host Configuration Protocol (DHCP), a network management protocol, to configure devices on the Internet Protocol (IP) network. DHCP will provide the device with a unique IP address and also help us to get all neighbor routers' IP. Next, The computer will use Address Resolution Protocol (ARP) to map an IP address to a device's Media Access Control (MAC) address within a local network. The Domain Name System (DNS) is also obtained in this stage. When the user wants to fetch a webpage, the DNS will be used to find the IP address of the web page. Finally, the computer will send a Hypertext Transfer Protocol (HTTP) request to open the page in a browser. The server will then respond with the content and display it in the browser. The Transmission Control Protocol (TCP), IP datagram, and Ethernet frame are the result of the division and encapsulation of this request. The packet then goes through all interfaces to get to the destination.\\
+		The first step after starting the computer is to use the Ethernet to use Dynamic Host Configuration Protocol (DHCP), a network management protocol, to configure devices on the Internet Protocol (IP) network. DHCP will provide the device with a unique IP address and also help us to get all neighbor routers' IP. Next, The computer will use Address Resolution Protocol (ARP) to map an IP address to a device's Media Access Control (MAC) address within a local network. The Domain Name System (DNS) is also obtained in this stage. When the user wants to fetch a webpage, the DNS will be used to find the IP address of the web page. Finally, the computer will send a Hypertext Transfer Protocol (HTTP) request to open the page in a browser. The server will then respond with the content and display it in the browser. The Transmission Control Protocol (TCP), IP datagram, and Ethernet frame are the result of the division and encapsulation of this request. The packets are first passes through switches. The switches will forward the packets into the hop based on the destination MAC address. Then it will forward it to the router that can forward those packets to the destination IP address. At the router, the router will forward the packets to the appropriate network. The router then forward the packets to other routers following the routing table until it reaches the destination.\\
 	\end{enumerate}
 \end{document}  
